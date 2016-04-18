@@ -17,6 +17,7 @@ package com.borjabravo.readmoretextview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -109,6 +110,7 @@ public class ReadMoreTextView extends TextView {
         setText(text);
         setMovementMethod(LinkMovementMethod.getInstance());
         setText(addClickableReadMore(Html.fromHtml(getText().toString()), expandText.toString()), TextView.BufferType.SPANNABLE);
+        setHighlightColor(Color.TRANSPARENT);
     }
 
     private SpannableStringBuilder addClickableReadMore(final Spanned strSpanned, final String spannableText) {
@@ -120,14 +122,31 @@ public class ReadMoreTextView extends TextView {
         return ssb;
     }
 
+    public void setColorClickableText(int colorClickableText) {
+        this.colorClickableText = colorClickableText;
+    }
+
+    public void setNumLines(int numLines) {
+        this.numLines = numLines;
+    }
+
+    public void setTrimCollapsedText(CharSequence trimCollapsedText) {
+        this.trimCollapsedText = trimCollapsedText;
+    }
+
+    public void setTrimExpandedText(CharSequence trimExpandedText) {
+        this.trimExpandedText = trimExpandedText;
+    }
+
     private void updateViewMoreSpan() {
         setLayoutParams(getLayoutParams());
         setText(getTag().toString(), TextView.BufferType.SPANNABLE);
-        invalidate();
         init();
     }
 
     private class ReadMoreClickableSpan extends ClickableSpan {
+
+
         @Override
         public void onClick(View widget) {
             numLines = readMore ? ALL_LINES : maxLines;
