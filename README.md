@@ -1,4 +1,4 @@
-# ReadMoreTextViewSample
+# ReadMoreTextView
 A TextView that can display a number of lines or the entire contents
 
 License
