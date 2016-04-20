@@ -1,5 +1,5 @@
 # ReadMoreTextView
-A TextView that can display a number of lines or the entire contents
+A Custom TextView with trim text
 
 License
 =======
