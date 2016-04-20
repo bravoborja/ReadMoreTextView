@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -27,7 +26,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 /**
@@ -35,99 +33,96 @@ import android.widget.TextView;
  */
 public class ReadMoreTextView extends TextView {
 
-    private final static String ELLIPSE = "... ";
-    private final static String SPACE = " ";
-    private final static int DEFAULT_NUM_LINES = 4;
-    private final static int ALL_LINES = -1;
+    private static final int DEFAULT_TRIM_LENGTH = 240;
+    private static final boolean DEFAULT_SHOW_TRIM_EXPANDED_TEXT = true;
+    private static final String ELLIPSIZE = "... ";
 
-    private ReadMoreClickableSpan readMoreClickableSpan;
+    private CharSequence text;
+    private BufferType bufferType;
     private boolean readMore = true;
-
+    private int trimLength;
     private CharSequence trimCollapsedText;
     private CharSequence trimExpandedText;
-    private int numLines;
-    private int maxLines;
+    private ReadMoreClickableSpan viewMoreSpan;
     private int colorClickableText;
+    private boolean showTrimExpandedText;
 
     public ReadMoreTextView(Context context) {
         this(context, null);
-        init();
     }
 
     public ReadMoreTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ReadMoreTextView);
-        int resourceIdTrimCollapsedText = typedArray.getResourceId(R.styleable.ReadMoreTextView_trimCollapsedText, R.string.read_more);
-        int resourceIdTrimExpandedText = typedArray.getResourceId(R.styleable.ReadMoreTextView_trimExpandedText, R.string.read_less);
+        this.trimLength = typedArray.getInt(R.styleable.ReadMoreTextView_trimLength, DEFAULT_TRIM_LENGTH);
+        int resourceIdTrimCollapsedText =
+                typedArray.getResourceId(R.styleable.ReadMoreTextView_trimCollapsedText, R.string.read_more);
+        int resourceIdTrimExpandedText =
+                typedArray.getResourceId(R.styleable.ReadMoreTextView_trimExpandedText, R.string.read_less);
         this.trimCollapsedText = getResources().getString(resourceIdTrimCollapsedText);
         this.trimExpandedText = getResources().getString(resourceIdTrimExpandedText);
-        this.numLines = typedArray.getInt(R.styleable.ReadMoreTextView_numLines, DEFAULT_NUM_LINES);
-        this.maxLines = numLines;
-        this.colorClickableText = typedArray.getColor(R.styleable.ReadMoreTextView_colorClickableText, ContextCompat.getColor(context, R.color.colorAccent));
-        this.readMoreClickableSpan = new ReadMoreClickableSpan();
+        this.colorClickableText = typedArray.getColor(R.styleable.ReadMoreTextView_colorClickableText,
+                ContextCompat.getColor(context, R.color.accent));
+        this.showTrimExpandedText =
+                typedArray.getBoolean(R.styleable.ReadMoreTextView_showTrimExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
         typedArray.recycle();
-        init();
+        viewMoreSpan = new ReadMoreClickableSpan();
     }
 
-    private void init() {
-        if (getTag() == null) {
-            setTag(getText());
-        }
-        ViewTreeObserver vto = getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                ViewTreeObserver obs = getViewTreeObserver();
-                obs.removeOnGlobalLayoutListener(this);
-                if (numLines == 0) {
-                    updateText(textCollapsed(0), trimCollapsedText);
-                } else if (numLines > 0 && getLineCount() > numLines) {
-                    updateText(textCollapsed(numLines - 1), trimCollapsedText);
-                } else {
-                    updateText(textExpanded(getLineEndIndex(getLayout().getLineCount() - 1)), trimExpandedText);
-                }
-            }
-        });
-    }
-
-    private int getLineEndIndex(int position) {
-        return getLayout().getLineEnd(position);
-    }
-
-    private String textCollapsed(int position) {
-        return getText().subSequence(0, getLineEndIndex(position) - trimCollapsedText.length() + 1) + ELLIPSE + trimCollapsedText;
-    }
-
-    private String textExpanded(int lineEndIndex) {
-        if ((getText().length() == lineEndIndex) && (getLineCount() <= numLines)) {
-            return getText().toString(); // Text does not need to expand
-        } else {
-            return getText().subSequence(0, lineEndIndex) + SPACE + trimExpandedText;
-        }
-    }
-
-    private void updateText(String text, CharSequence expandText) {
-        setText(text);
+    private void setText() {
+        super.setText(getDisplayableText(), bufferType);
         setMovementMethod(LinkMovementMethod.getInstance());
-        setText(addClickableReadMore(Html.fromHtml(getText().toString()), expandText.toString()), TextView.BufferType.SPANNABLE);
         setHighlightColor(Color.TRANSPARENT);
     }
 
-    private SpannableStringBuilder addClickableReadMore(final Spanned strSpanned, final String spannableText) {
-        String str = strSpanned.toString();
-        SpannableStringBuilder ssb = new SpannableStringBuilder(strSpanned);
-        if (str.contains(spannableText)) {
-            ssb.setSpan(readMoreClickableSpan, str.indexOf(spannableText), str.indexOf(spannableText) + spannableText.length(), 0);
+    private CharSequence getDisplayableText() {
+        return getTrimmedText(text);
+    }
+
+    @Override
+    public void setText(CharSequence text, BufferType type) {
+        this.text = text;
+        bufferType = type;
+        setText();
+    }
+
+    private CharSequence getTrimmedText(CharSequence text) {
+        if (text != null && text.length() > trimLength) {
+            if (readMore) {
+                return updateExpandedText();
+            } else {
+                return updateCollapsedText();
+            }
         }
-        return ssb;
+        return text;
+    }
+
+    private CharSequence updateExpandedText() {
+        SpannableStringBuilder s =
+                new SpannableStringBuilder(text, 0, trimLength + 1).append(ELLIPSIZE).append(trimCollapsedText);
+        return addClickableSpan(s, trimCollapsedText);
+    }
+
+    private CharSequence updateCollapsedText() {
+        if (showTrimExpandedText) {
+            SpannableStringBuilder s = new SpannableStringBuilder(text, 0, text.length()).append(trimExpandedText);
+            return addClickableSpan(s, trimExpandedText);
+        }
+        return text;
+    }
+
+    private CharSequence addClickableSpan(SpannableStringBuilder s, CharSequence trimText) {
+        s.setSpan(viewMoreSpan, s.length() - trimText.length(), s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return s;
+    }
+
+    public void setTrimLength(int trimLength) {
+        this.trimLength = trimLength;
+        setText();
     }
 
     public void setColorClickableText(int colorClickableText) {
         this.colorClickableText = colorClickableText;
-    }
-
-    public void setNumLines(int numLines) {
-        this.numLines = numLines;
     }
 
     public void setTrimCollapsedText(CharSequence trimCollapsedText) {
@@ -138,20 +133,11 @@ public class ReadMoreTextView extends TextView {
         this.trimExpandedText = trimExpandedText;
     }
 
-    private void updateViewMoreSpan() {
-        setLayoutParams(getLayoutParams());
-        setText(getTag().toString(), TextView.BufferType.SPANNABLE);
-        init();
-    }
-
     private class ReadMoreClickableSpan extends ClickableSpan {
-
-
         @Override
         public void onClick(View widget) {
-            numLines = readMore ? ALL_LINES : maxLines;
-            updateViewMoreSpan();
             readMore = !readMore;
+            setText();
         }
 
         @Override

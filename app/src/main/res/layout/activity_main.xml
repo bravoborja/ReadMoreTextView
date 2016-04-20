@@ -10,22 +10,24 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <com.borjabravo.readmoretextview.ReadMoreTextView
+        android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/lorem_ipsum"
-        app:trimCollapsedText="@string/show_all_content" />
+        app:trimCollapsedText="@string/show_all_content"/>
 
     <com.borjabravo.readmoretextview.ReadMoreTextView
+        android:id="@+id/text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/lorem_ipsum2"
-        app:colorClickableText="@color/colorPrimary"
-        app:numLines="2" />
+        app:colorClickableText="@color/colorPrimary"/>
 
     <com.borjabravo.readmoretextview.ReadMoreTextView
+        android:id="@+id/text3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/lorem_ipsum3" />
+        app:trimLength="100"
+        app:showTrimExpandedText="false"/>
+
 </LinearLayout>
