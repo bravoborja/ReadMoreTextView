@@ -28,6 +28,8 @@ You can customize ReadMoreTextView with:
 
 ## Screenshots
 
+![screenshot](screenshots/collapsed.png)
+![screenshot](screenshots/expanded.png)
 
 License
 =======
