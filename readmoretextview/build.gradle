@@ -19,7 +19,7 @@ ext {
     artifact = 'readmoretextview'
 
     libraryDescription = 'A TextView that can display a number of lines or the entire contents'
-    libraryVersion = '1.1.0'
+    libraryVersion = '1.1.1'
 
     developerId = 'borjabravo10'
     developerName = 'Borja Bravo Álvarez'
@@ -37,7 +37,7 @@ bintray {
         licenses = ["Apache-2.0"]
         publish = true
         version {
-            name = '1.1.0'
+            name = '1.1.1'
             desc = 'A TextView that can display a number of lines or the entire contents'
             vcsUrl = 'https://github.com/borjabravo10/ReadMoreTextView'
         }
