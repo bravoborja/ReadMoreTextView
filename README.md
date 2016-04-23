@@ -1,4 +1,6 @@
 # ReadMoreTextView
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-ReadMoreTextView-green.svg?style=true)](https://android-arsenal.com/details/1/3473)
+
 A Custom TextView with trim text
 
 ## Download
