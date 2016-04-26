@@ -1,0 +1,17 @@
+language: android
+
+android:
+  components:
+    - tools
+    - build-tools-23.0.3
+    - android-23
+    - extra-android-m2repository
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2
+
+script:
+  ./gradlew build
