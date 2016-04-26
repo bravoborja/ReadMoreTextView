@@ -3,7 +3,9 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+if (project.rootProject.file('local.properties').exists()) {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+}
 
 ext {
     // Where you will see your artifact in Bintray's web interface
@@ -27,10 +29,11 @@ ext {
 }
 
 bintray {
+
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
     configurations = ['archives']
-//    publications = ['MyPublication']
+    //    publications = ['MyPublication']
     pkg {
         repo = "maven"
         name = "ReadMoreTextView"
@@ -60,14 +63,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.3.0'
     testCompile 'junit:junit:4.12'
-
 }
-
-apply from: 'https://raw.githubusercontent.com/borjabravo10/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/borjabravo10/JCenter/master/bintrayv1.gradle'
+if (project.rootProject.file('local.properties').exists()) {
+    apply from: 'https://raw.githubusercontent.com/borjabravo10/JCenter/master/installv1.gradle'
+    apply from: 'https://raw.githubusercontent.com/borjabravo10/JCenter/master/bintrayv1.gradle'
+}
