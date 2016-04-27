@@ -67,6 +67,7 @@ public class ReadMoreTextView extends TextView {
                 typedArray.getBoolean(R.styleable.ReadMoreTextView_showTrimExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
         typedArray.recycle();
         viewMoreSpan = new ReadMoreClickableSpan();
+        setText();
     }
 
     private void setText() {
