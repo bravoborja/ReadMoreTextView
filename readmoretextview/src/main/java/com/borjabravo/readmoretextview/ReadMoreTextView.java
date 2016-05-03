@@ -90,21 +90,21 @@ public class ReadMoreTextView extends TextView {
     private CharSequence getTrimmedText(CharSequence text) {
         if (text != null && text.length() > trimLength) {
             if (readMore) {
-                return updateExpandedText();
-            } else {
                 return updateCollapsedText();
+            } else {
+                return updateExpandedText();
             }
         }
         return text;
     }
 
-    private CharSequence updateExpandedText() {
+    private CharSequence updateCollapsedText() {
         SpannableStringBuilder s =
                 new SpannableStringBuilder(text, 0, trimLength + 1).append(ELLIPSIZE).append(trimCollapsedText);
         return addClickableSpan(s, trimCollapsedText);
     }
 
-    private CharSequence updateCollapsedText() {
+    private CharSequence updateExpandedText() {
         if (showTrimExpandedText) {
             SpannableStringBuilder s = new SpannableStringBuilder(text, 0, text.length()).append(trimExpandedText);
             return addClickableSpan(s, trimExpandedText);

@@ -9,7 +9,7 @@ if (project.rootProject.file('local.properties').exists()) {
 
 ext {
     // Where you will see your artifact in Bintray's web interface
-    // The "bintrayName" should match the name of the Bintray repro.
+    // The "bintrayName" should match the name of the Bintray repo.
     bintrayRepo = 'maven'
     bintrayName = 'ReadMoreTextView'
 
@@ -20,8 +20,8 @@ ext {
     // module. The artifact name needs to match the name of the library.
     artifact = 'readmoretextview'
 
-    libraryDescription = 'A TextView that can display a number of lines or the entire contents'
-    libraryVersion = '1.1.1'
+    libraryDescription = 'A Custom TextView with trim text'
+    libraryVersion = '1.1.2'
 
     developerId = 'borjabravo10'
     developerName = 'Borja Bravo Álvarez'
@@ -33,15 +33,14 @@ bintray {
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
     configurations = ['archives']
-    //    publications = ['MyPublication']
     pkg {
         repo = "maven"
         name = "ReadMoreTextView"
         licenses = ["Apache-2.0"]
         publish = true
         version {
-            name = '1.1.1'
-            desc = 'A TextView that can display a number of lines or the entire contents'
+            name = '1.1.2'
+            desc = 'A Custom TextView with trim text'
             vcsUrl = 'https://github.com/borjabravo10/ReadMoreTextView'
         }
     }
@@ -52,7 +51,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 9
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
