@@ -27,7 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:showTrimExpandedText="false"
         app:trimLength="100"
-        app:showTrimExpandedText="false"/>
+        />
 
 </LinearLayout>

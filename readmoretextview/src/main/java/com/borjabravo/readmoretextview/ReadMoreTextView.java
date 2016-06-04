@@ -18,6 +18,7 @@ package com.borjabravo.readmoretextview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -26,6 +27,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 /**
@@ -33,7 +35,10 @@ import android.widget.TextView;
  */
 public class ReadMoreTextView extends TextView {
 
+    private static final int TRIM_MODE_LINES = 0;
+    private static final int TRIM_MODE_LENGTH = 1;
     private static final int DEFAULT_TRIM_LENGTH = 240;
+    private static final int DEFAULT_TRIM_LINES = 2;
     private static final boolean DEFAULT_SHOW_TRIM_EXPANDED_TEXT = true;
     private static final String ELLIPSIZE = "... ";
 
@@ -46,6 +51,10 @@ public class ReadMoreTextView extends TextView {
     private ReadMoreClickableSpan viewMoreSpan;
     private int colorClickableText;
     private boolean showTrimExpandedText;
+
+    private int trimMode;
+    private int lineEndIndex;
+    private int trimLines;
 
     public ReadMoreTextView(Context context) {
         this(context, null);
@@ -61,12 +70,15 @@ public class ReadMoreTextView extends TextView {
                 typedArray.getResourceId(R.styleable.ReadMoreTextView_trimExpandedText, R.string.read_less);
         this.trimCollapsedText = getResources().getString(resourceIdTrimCollapsedText);
         this.trimExpandedText = getResources().getString(resourceIdTrimExpandedText);
+        this.trimLines = typedArray.getInt(R.styleable.ReadMoreTextView_trimLines, DEFAULT_TRIM_LINES);
         this.colorClickableText = typedArray.getColor(R.styleable.ReadMoreTextView_colorClickableText,
                 ContextCompat.getColor(context, R.color.accent));
         this.showTrimExpandedText =
                 typedArray.getBoolean(R.styleable.ReadMoreTextView_showTrimExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
+        this.trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_trimLines, TRIM_MODE_LINES);
         typedArray.recycle();
         viewMoreSpan = new ReadMoreClickableSpan();
+        onGlobalLayoutLineEndIndex();
         setText();
     }
 
@@ -88,19 +100,43 @@ public class ReadMoreTextView extends TextView {
     }
 
     private CharSequence getTrimmedText(CharSequence text) {
-        if (text != null && text.length() > trimLength) {
-            if (readMore) {
-                return updateCollapsedText();
-            } else {
-                return updateExpandedText();
+        if (trimMode == TRIM_MODE_LENGTH) {
+            if (text != null && text.length() > trimLength) {
+                if (readMore) {
+                    return updateCollapsedText();
+                } else {
+                    return updateExpandedText();
+                }
+            }
+        }
+        if (trimMode == TRIM_MODE_LINES) {
+            if (text != null && lineEndIndex > 0) {
+                if (readMore) {
+                    return updateCollapsedText();
+                } else {
+                    return updateExpandedText();
+                }
             }
         }
         return text;
     }
 
     private CharSequence updateCollapsedText() {
-        SpannableStringBuilder s =
-                new SpannableStringBuilder(text, 0, trimLength + 1).append(ELLIPSIZE).append(trimCollapsedText);
+        int trimEndIndex = text.length();
+        switch (trimMode) {
+            case TRIM_MODE_LINES:
+                trimEndIndex = lineEndIndex - (ELLIPSIZE.length() + trimCollapsedText.length() + 1);
+                if (trimEndIndex < 0) {
+                    trimEndIndex = trimLength + 1;
+                }
+                break;
+            case TRIM_MODE_LENGTH:
+                trimEndIndex = trimLength + 1;
+                break;
+        }
+        SpannableStringBuilder s = new SpannableStringBuilder(text, 0, trimEndIndex)
+                .append(ELLIPSIZE)
+                .append(trimCollapsedText);
         return addClickableSpan(s, trimCollapsedText);
     }
 
@@ -134,6 +170,14 @@ public class ReadMoreTextView extends TextView {
         this.trimExpandedText = trimExpandedText;
     }
 
+    public void setTrimMode(int trimMode) {
+        this.trimMode = trimMode;
+    }
+
+    public void setTrimLines(int trimLines) {
+        this.trimLines = trimLines;
+    }
+
     private class ReadMoreClickableSpan extends ClickableSpan {
         @Override
         public void onClick(View widget) {
@@ -144,6 +188,38 @@ public class ReadMoreTextView extends TextView {
         @Override
         public void updateDrawState(TextPaint ds) {
             ds.setColor(colorClickableText);
+        }
+    }
+
+    private void onGlobalLayoutLineEndIndex() {
+        if (trimMode == TRIM_MODE_LINES) {
+            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    ViewTreeObserver obs = getViewTreeObserver();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        obs.removeOnGlobalLayoutListener(this);
+                    } else {
+                        obs.removeGlobalOnLayoutListener(this);
+                    }
+                    refreshLineEndIndex();
+                    setText();
+                }
+            });
+        }
+    }
+
+    private void refreshLineEndIndex() {
+        try {
+            if (trimLines == 0) {
+                lineEndIndex = getLayout().getLineEnd(0);
+            } else if (trimLines > 0 && getLineCount() >= trimLines) {
+                lineEndIndex = getLayout().getLineEnd(trimLines - 1);
+            } else {
+                lineEndIndex = getLayout().getLineEnd(getLayout().getLineCount() - 1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
