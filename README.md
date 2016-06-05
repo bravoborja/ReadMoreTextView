@@ -29,6 +29,7 @@ You can customize ReadMoreTextView with:
 - app:trimLength: Trim length to determine when the clickable text is displayed.
 - app:showTrimExpandedText: Show the trim text if it's true. 
 - app:colorClickableText: Text color of trim clickable text.
+- app:trimMode: Choose trim mode with two options: trimModeLength or trimModeLines.
 
 ## Screenshots
 
