@@ -75,7 +75,7 @@ public class ReadMoreTextView extends TextView {
                 ContextCompat.getColor(context, R.color.accent));
         this.showTrimExpandedText =
                 typedArray.getBoolean(R.styleable.ReadMoreTextView_showTrimExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
-        this.trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_trimLines, TRIM_MODE_LINES);
+        this.trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_trimMode, TRIM_MODE_LINES);
         typedArray.recycle();
         viewMoreSpan = new ReadMoreClickableSpan();
         onGlobalLayoutLineEndIndex();

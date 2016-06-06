@@ -21,7 +21,7 @@ ext {
     artifact = 'readmoretextview'
 
     libraryDescription = 'A Custom TextView with trim text'
-    libraryVersion = '2.0.0'
+    libraryVersion = '2.0.1'
 
     developerId = 'borjabravo10'
     developerName = 'Borja Bravo Álvarez'
@@ -39,7 +39,7 @@ bintray {
         licenses = ["Apache-2.0"]
         publish = true
         version {
-            name = '2.0.0'
+            name = '2.0.1'
             desc = 'A Custom TextView with trim text'
             vcsUrl = 'https://github.com/borjabravo10/ReadMoreTextView'
         }
