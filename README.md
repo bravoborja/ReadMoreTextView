@@ -1,4 +1,7 @@
 # ReadMoreTextView
+
+[Post in Spanish](http://borjabravo.com/readmoretextview)
+
 [![Build Status](https://travis-ci.org/borjabravo10/ReadMoreTextView.svg?branch=master)](https://travis-ci.org/borjabravo10/ReadMoreTextView)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-ReadMoreTextView-green.svg?style=true)](https://android-arsenal.com/details/1/3473)
 [![](https://jitpack.io/v/borjabravo10/ReadMoreTextView.svg)](https://jitpack.io/#borjabravo10/ReadMoreTextView)
