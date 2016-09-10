@@ -39,6 +39,7 @@ public class ReadMoreTextView extends TextView {
     private static final int TRIM_MODE_LENGTH = 1;
     private static final int DEFAULT_TRIM_LENGTH = 240;
     private static final int DEFAULT_TRIM_LINES = 2;
+    private static final int INVALID_END_INDEX = -1;
     private static final boolean DEFAULT_SHOW_TRIM_EXPANDED_TEXT = true;
     private static final String ELLIPSIZE = "... ";
 
@@ -216,7 +217,7 @@ public class ReadMoreTextView extends TextView {
             } else if (trimLines > 0 && getLineCount() >= trimLines) {
                 lineEndIndex = getLayout().getLineEnd(trimLines - 1);
             } else {
-                lineEndIndex = getLayout().getLineEnd(getLayout().getLineCount() - 1);
+                lineEndIndex = INVALID_END_INDEX;
             }
         } catch (Exception e) {
             e.printStackTrace();

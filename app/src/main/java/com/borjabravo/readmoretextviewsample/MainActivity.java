@@ -16,5 +16,7 @@ public class MainActivity extends AppCompatActivity {
         text2.setText(getString(R.string.lorem_ipsum2));
         TextView text3 = (TextView) findViewById(R.id.text3);
         text3.setText(getString(R.string.lorem_ipsum3));
+        TextView text4 = (TextView) findViewById(R.id.text4);
+        text4.setText(getString(R.string.one_line_text));
     }
 }
