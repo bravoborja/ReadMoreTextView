@@ -1,17 +1,24 @@
 language: android
+jdk: oraclejdk8
 
 android:
   components:
     - tools
-    - build-tools-23.0.3
-    - android-23
+    - tools
+    - platform-tools
+    - build-tools-25.0.2
+    - android-25
     - extra-android-m2repository
 
-sudo: false
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
-    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
 
 script:
   ./gradlew build
