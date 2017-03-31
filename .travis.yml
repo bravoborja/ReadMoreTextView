@@ -3,8 +3,10 @@ language: android
 android:
   components:
     - tools
-    - build-tools-23.0.3
-    - android-23
+    - tools
+    - platform-tools
+    - build-tools-25.0.2
+    - android-25
     - extra-android-m2repository
 
 sudo: false
