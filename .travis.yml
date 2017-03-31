@@ -1,4 +1,5 @@
 language: android
+jdk: oraclejdk8
 
 android:
   components:
@@ -9,11 +10,15 @@ android:
     - android-25
     - extra-android-m2repository
 
-sudo: false
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 cache:
   directories:
-    - $HOME/.m2
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
 
 script:
   ./gradlew build
