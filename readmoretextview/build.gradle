@@ -23,8 +23,8 @@ ext {
     libraryDescription = 'A Custom TextView with trim text'
     libraryVersion = '2.0.1'
 
-    developerId = 'borjabravo10'
-    developerName = 'Borja Bravo Álvarez'
+    developerId = 'bravoborja'
+    developerName = 'Borja Bravo'
     developerEmail = 'borja.bravoalvarez@gmail.com'
 }
 
@@ -41,7 +41,7 @@ bintray {
         version {
             name = '2.0.1'
             desc = 'A Custom TextView with trim text'
-            vcsUrl = 'https://github.com/borjabravo10/ReadMoreTextView'
+            vcsUrl = 'https://github.com/bravoborja/ReadMoreTextView'
         }
     }
 }
@@ -68,6 +68,6 @@ dependencies {
 }
 
 if (project.rootProject.file('local.properties').exists()) {
-    apply from: 'https://raw.githubusercontent.com/borjabravo10/JCenter/master/installv1.gradle'
-    apply from: 'https://raw.githubusercontent.com/borjabravo10/JCenter/master/bintrayv1.gradle'
+    apply from: 'https://raw.githubusercontent.com/bravoborja/JCenter/master/installv1.gradle'
+    apply from: 'https://raw.githubusercontent.com/bravoborja/JCenter/master/bintrayv1.gradle'
 }
