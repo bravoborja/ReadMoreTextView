@@ -1,13 +1,5 @@
 # ReadMoreTextView
 
-[Post in Spanish](http://borjabravo.com/readmoretextview)
-
-[![Build Status](https://travis-ci.org/borjabravo10/ReadMoreTextView.svg?branch=master)](https://travis-ci.org/borjabravo10/ReadMoreTextView)
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-ReadMoreTextView-green.svg?style=true)](https://android-arsenal.com/details/1/3473)
-[![](https://jitpack.io/v/borjabravo10/ReadMoreTextView.svg)](https://jitpack.io/#borjabravo10/ReadMoreTextView)
-[![Android Weekly](http://img.shields.io/badge/Android%20Weekly-%23219-2CB3E5.svg?style=flat)](http://androidweekly.net/issues/issue-219)
-[![Android Dev Digest](http://img.shields.io/badge/Android%20Dev%20Digest-%23135-2CB3E5.svg?style=flat)](https://www.androiddevdigest.com/digest135/)
-
 A Custom TextView with trim text
 
 ## Download
