@@ -1,49 +1,14 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.novoda.bintray-release'
 
-Properties properties = new Properties()
-if (project.rootProject.file('local.properties').exists()) {
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-}
-
-ext {
-    // Where you will see your artifact in Bintray's web interface
-    // The "bintrayName" should match the name of the Bintray repo.
-    bintrayRepo = 'maven'
-    bintrayName = 'ReadMoreTextView'
-
-    // Maven metadata
-    publishedGroupId = 'com.borjabravo'
-    libraryName = 'ReadMoreTextView'
-    // Save yourself a head ache, and set this equal to the name of the Android Studio library
-    // module. The artifact name needs to match the name of the library.
-    artifact = 'readmoretextview'
-
-    libraryDescription = 'A Custom TextView with trim text'
-    libraryVersion = '2.0.1'
-
-    developerId = 'bravoborja'
-    developerName = 'Borja Bravo'
-    developerEmail = 'borja.bravoalvarez@gmail.com'
-}
-
-bintray {
-
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-    configurations = ['archives']
-    pkg {
-        repo = "maven"
-        name = "ReadMoreTextView"
-        licenses = ["Apache-2.0"]
-        publish = true
-        version {
-            name = '2.0.1'
-            desc = 'A Custom TextView with trim text'
-            vcsUrl = 'https://github.com/bravoborja/ReadMoreTextView'
-        }
-    }
+publish {
+    userOrg = 'bravoborja'
+    groupId = 'com.borjabravo'
+    uploadName = 'ReadMoreTextView'
+    artifactId = 'readmoretextview'
+    publishVersion = '2.0.1'
+    desc = 'A Custom TextView with trim text'
+    website = 'https://github.com/bravoborja/ReadMoreTextView'
 }
 
 android {
@@ -65,9 +30,4 @@ android {
 dependencies {
     compile 'com.android.support:support-compat:25.3.1'
     testCompile 'junit:junit:4.12'
-}
-
-if (project.rootProject.file('local.properties').exists()) {
-    apply from: 'https://raw.githubusercontent.com/bravoborja/JCenter/master/installv1.gradle'
-    apply from: 'https://raw.githubusercontent.com/bravoborja/JCenter/master/bintrayv1.gradle'
 }
