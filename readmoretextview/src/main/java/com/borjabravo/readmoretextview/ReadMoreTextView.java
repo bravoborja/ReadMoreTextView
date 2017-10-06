@@ -113,7 +113,9 @@ public class ReadMoreTextView extends TextView {
         if (trimMode == TRIM_MODE_LINES) {
             if (text != null && lineEndIndex > 0) {
                 if (readMore) {
-                    return updateCollapsedText();
+                    if (getLayout().getLineCount() > trimLines) {
+                        return updateCollapsedText();
+                    }
                 } else {
                     return updateExpandedText();
                 }
