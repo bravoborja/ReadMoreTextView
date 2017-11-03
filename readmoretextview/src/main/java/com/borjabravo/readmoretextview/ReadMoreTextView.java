@@ -18,14 +18,16 @@ package com.borjabravo.readmoretextview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.text.Layout;
+import android.text.Selection;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
@@ -76,13 +78,56 @@ public class ReadMoreTextView extends TextView {
         this.trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_trimMode, TRIM_MODE_LINES);
         typedArray.recycle();
         viewMoreSpan = new ReadMoreClickableSpan();
+        setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                TextView widget = (TextView) v;
+                Spannable buffer = Spannable.Factory.getInstance().newSpannable(widget.getText());
+                int action = event.getAction();
+
+                // https://stackoverflow.com/questions/8558732/listview-textview-with-linkmovementmethod-makes-list-item-unclickable
+
+                // to fix a bug when call setMovementMethod will make list item unclickable
+                if (action == MotionEvent.ACTION_UP ||
+                        action == MotionEvent.ACTION_DOWN) {
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+
+                    x -= widget.getTotalPaddingLeft();
+                    y -= widget.getTotalPaddingTop();
+
+                    x += widget.getScrollX();
+                    y += widget.getScrollY();
+
+                    Layout layout = widget.getLayout();
+                    int line = layout.getLineForVertical(y);
+                    int off = layout.getOffsetForHorizontal(line, x);
+
+                    ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
+
+                    if (link.length != 0) {
+                        if (action == MotionEvent.ACTION_UP) {
+                            link[0].onClick(widget);
+                        } else if (action == MotionEvent.ACTION_DOWN) {
+                            Selection.setSelection(buffer,
+                                    buffer.getSpanStart(link[0]),
+                                    buffer.getSpanEnd(link[0]));
+                        }
+
+                        return true;
+                    } else {
+                        Selection.removeSelection(buffer);
+                    }
+                }
+                return false;
+            }
+        });
         onGlobalLayoutLineEndIndex();
         setText();
     }
 
     private void setText() {
         super.setText(getDisplayableText(), bufferType);
-        setMovementMethod(LinkMovementMethod.getInstance());
         setHighlightColor(Color.TRANSPARENT);
     }
 
@@ -125,7 +170,15 @@ public class ReadMoreTextView extends TextView {
         int trimEndIndex = text.length();
         switch (trimMode) {
             case TRIM_MODE_LINES:
-                trimEndIndex = lineEndIndex - (ELLIPSIZE.length() + trimCollapsedText.length() + 1);
+                trimEndIndex = lineEndIndex;
+                //find enough space to layout ELLIPSIZE
+                float ellipsizeWidth = getPaint().measureText(ELLIPSIZE + trimCollapsedText);
+                float collapsedWidth = getPaint().measureText(text.subSequence(trimEndIndex, trimEndIndex + 1).toString());
+                while (collapsedWidth < ellipsizeWidth) {
+                    --trimEndIndex;
+                    collapsedWidth += getPaint().measureText(text.subSequence(trimEndIndex, trimEndIndex + 1).toString());
+                }
+
                 if (trimEndIndex < 0) {
                     trimEndIndex = trimLength + 1;
                 }
@@ -193,28 +246,31 @@ public class ReadMoreTextView extends TextView {
 
     private void onGlobalLayoutLineEndIndex() {
         if (trimMode == TRIM_MODE_LINES) {
-            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
-                public void onGlobalLayout() {
+                public boolean onPreDraw() {
                     ViewTreeObserver obs = getViewTreeObserver();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        obs.removeOnGlobalLayoutListener(this);
-                    } else {
-                        obs.removeGlobalOnLayoutListener(this);
-                    }
+                    obs.removeOnPreDrawListener(this);
                     refreshLineEndIndex();
                     setText();
+                    return true;
                 }
             });
         }
     }
 
+    @Override
+    public boolean performLongClick() {
+        //a side affect that every slide move will trigger a long click event
+        return false;
+    }
+
     private void refreshLineEndIndex() {
         try {
             if (trimLines == 0) {
-                lineEndIndex = getLayout().getLineEnd(0);
+                lineEndIndex = getLayout().getLineVisibleEnd(0);
             } else if (trimLines > 0 && getLineCount() >= trimLines) {
-                lineEndIndex = getLayout().getLineEnd(trimLines - 1);
+                lineEndIndex = getLayout().getLineVisibleEnd(trimLines - 1);
             } else {
                 lineEndIndex = INVALID_END_INDEX;
             }
