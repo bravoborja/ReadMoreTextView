@@ -6,8 +6,8 @@ android:
     - tools
     - tools
     - platform-tools
-    - build-tools-25.0.2
-    - android-25
+    - build-tools-27.0.0
+    - android-27
     - extra-android-m2repository
 
 before_cache:
