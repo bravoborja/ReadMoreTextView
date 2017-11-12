@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Borja Bravo Álvarez
+ * Copyright (C) 2016 Borja Bravo
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
-/**
- * Created by borja on 17/4/16.
- */
 public class ReadMoreTextView extends TextView {
 
     private static final int TRIM_MODE_LINES = 0;
