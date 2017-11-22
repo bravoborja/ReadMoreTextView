@@ -34,6 +34,7 @@
         android:id="@+id/text4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         app:collapsedTextAppearance="@style/AppTheme.TextAppearance.Collapsed"
         app:expandedTextAppearance="@style/AppTheme.TextAppearance.Expanded"
         app:trimCollapsedText="@string/show_all_content" />

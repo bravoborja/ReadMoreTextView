@@ -27,6 +27,8 @@ You can customize ReadMoreTextView with:
 - app:showTrimExpandedText: Show the trim text if it's true. 
 - app:colorClickableText: Text color of trim clickable text.
 - app:trimMode: Choose trim mode with two options: trimModeLength or trimModeLines.
+- app:expandedTextAppearance: Style for text that appears when the view is expanded.
+- app:collapsedTextAppearance: Style for text that appears when the view is collapsed.
 
 ## Screenshots
 
