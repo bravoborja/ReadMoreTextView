@@ -19,12 +19,14 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -39,6 +41,11 @@ public class ReadMoreTextView extends TextView {
     private static final int INVALID_END_INDEX = -1;
     private static final boolean DEFAULT_SHOW_TRIM_EXPANDED_TEXT = true;
     private static final String ELLIPSIZE = "... ";
+
+    @StyleRes
+    private final int expandedTextAppearance;
+    @StyleRes
+    private final int collapsedTextAppearance;
 
     private CharSequence text;
     private BufferType bufferType;
@@ -74,6 +81,8 @@ public class ReadMoreTextView extends TextView {
         this.showTrimExpandedText =
                 typedArray.getBoolean(R.styleable.ReadMoreTextView_showTrimExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
         this.trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_trimMode, TRIM_MODE_LINES);
+        this.expandedTextAppearance = typedArray.getResourceId(R.styleable.ReadMoreTextView_expandedTextAppearance, -1);
+        this.collapsedTextAppearance = typedArray.getResourceId(R.styleable.ReadMoreTextView_collapsedTextAppearance, -1);
         typedArray.recycle();
         viewMoreSpan = new ReadMoreClickableSpan();
         onGlobalLayoutLineEndIndex();
@@ -137,12 +146,14 @@ public class ReadMoreTextView extends TextView {
         SpannableStringBuilder s = new SpannableStringBuilder(text, 0, trimEndIndex)
                 .append(ELLIPSIZE)
                 .append(trimCollapsedText);
+        addTextStyleSpan(collapsedTextAppearance, s, trimCollapsedText);
         return addClickableSpan(s, trimCollapsedText);
     }
 
     private CharSequence updateExpandedText() {
         if (showTrimExpandedText) {
             SpannableStringBuilder s = new SpannableStringBuilder(text, 0, text.length()).append(trimExpandedText);
+            addTextStyleSpan(expandedTextAppearance, s, trimExpandedText);
             return addClickableSpan(s, trimExpandedText);
         }
         return text;
@@ -150,6 +161,12 @@ public class ReadMoreTextView extends TextView {
 
     private CharSequence addClickableSpan(SpannableStringBuilder s, CharSequence trimText) {
         s.setSpan(viewMoreSpan, s.length() - trimText.length(), s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return s;
+    }
+
+    private CharSequence addTextStyleSpan( int textAppearance, SpannableStringBuilder s, CharSequence text) {
+        s.setSpan(new TextAppearanceSpan(getContext(), textAppearance), s.length() - text.length(),
+                s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return s;
     }
 
