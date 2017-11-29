@@ -11,7 +11,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.borjabravo.readmoretextview.ReadMoreTextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final int COUNT = 30;
+    private List<Item> mItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +35,26 @@ public class MainActivity extends AppCompatActivity {
         text4.setText(getString(R.string.one_line_text));
         RecyclerView listView = (RecyclerView) findViewById(R.id.list);
         listView.setLayoutManager(new LinearLayoutManager(this));
-        listView.setAdapter(new ItemAdapter());
+        initMockData();
+        listView.setAdapter(new ItemAdapter(mItems));
+    }
+
+    private void initMockData() {
+        for (int i = 0; i < COUNT; i++) {
+            Item item = new Item();
+            item.text = i + " : " + getString(R.string.lorem_ipsum);
+            item.readMore = true;
+            mItems.add(item);
+        }
     }
 
     static class ItemAdapter extends RecyclerView.Adapter<ViewHolder> {
+
+        private List<Item> mItems;
+
+        public ItemAdapter(List<Item> items) {
+            mItems = new ArrayList<>(items);
+        }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
             final Context context = holder.itemView.getContext();
-            holder.text.setText(context.getString(R.string.lorem_ipsum));
+            holder.text.setText(mItems.get(position).text);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -49,23 +73,38 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            //todo ReadMoreTextView should have a pulbic method to reset textView's collapse status
-            // e.g.
-            //((ReadMoreTextView) holder.itemView).setCollapsed(position % 2 == 0)
+            holder.text.setToggleWatcher(new ReadMoreTextView.Watcher() {
+                @Override
+                public void onExpanded() {
+                    mItems.get(position).readMore = false;
+                }
+
+                @Override
+                public void onCollapsed() {
+                    mItems.get(position).readMore = true;
+                }
+            });
+
+            holder.text.toggleCollapsed(mItems.get(position).readMore);
         }
 
         @Override
         public int getItemCount() {
-            return 10;
+            return mItems.size();
         }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView text;
+        ReadMoreTextView text;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            text = (TextView) itemView.findViewById(R.id.text);
+            text = (ReadMoreTextView) itemView.findViewById(R.id.text);
         }
+    }
+
+    static class Item {
+        public String text;
+        public boolean readMore;
     }
 }

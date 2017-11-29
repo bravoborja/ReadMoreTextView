@@ -56,6 +56,8 @@ public class ReadMoreTextView extends TextView {
     private int lineEndIndex;
     private int trimLines;
 
+    private Watcher watcher;
+
     public ReadMoreTextView(Context context) {
         this(context, null);
     }
@@ -167,6 +169,9 @@ public class ReadMoreTextView extends TextView {
     }
 
     private CharSequence updateCollapsedText() {
+        if (watcher != null) {
+            watcher.onCollapsed();
+        }
         int trimEndIndex = text.length();
         switch (trimMode) {
             case TRIM_MODE_LINES:
@@ -194,6 +199,9 @@ public class ReadMoreTextView extends TextView {
     }
 
     private CharSequence updateExpandedText() {
+        if (watcher != null) {
+            watcher.onExpanded();
+        }
         if (showTrimExpandedText) {
             SpannableStringBuilder s = new SpannableStringBuilder(text, 0, text.length()).append(trimExpandedText);
             return addClickableSpan(s, trimExpandedText);
@@ -204,6 +212,15 @@ public class ReadMoreTextView extends TextView {
     private CharSequence addClickableSpan(SpannableStringBuilder s, CharSequence trimText) {
         s.setSpan(viewMoreSpan, s.length() - trimText.length(), s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return s;
+    }
+
+    public void toggleCollapsed(boolean readMore) {
+        this.readMore = readMore;
+        setText();
+    }
+
+    public void setToggleWatcher(Watcher watcher) {
+        this.watcher = watcher;
     }
 
     public void setTrimLength(int trimLength) {
@@ -277,5 +294,11 @@ public class ReadMoreTextView extends TextView {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public interface Watcher {
+        public void onExpanded();
+
+        public void onCollapsed();
     }
 }
