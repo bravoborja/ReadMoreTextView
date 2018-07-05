@@ -81,6 +81,7 @@ public class ReadMoreTextView extends TextView {
     }
 
     private void setText() {
+        super.setText(text, bufferType);
         super.setText(getDisplayableText(), bufferType);
         setMovementMethod(LinkMovementMethod.getInstance());
         setHighlightColor(Color.TRANSPARENT);
