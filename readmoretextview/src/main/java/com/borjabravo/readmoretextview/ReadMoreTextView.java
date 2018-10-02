@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -53,6 +54,20 @@ public class ReadMoreTextView extends TextView {
     private int trimMode;
     private int lineEndIndex;
     private int trimLines;
+
+    private onClickReadMore onClickReadMore;
+
+    public ReadMoreTextView.onClickReadMore getOnClickReadMore() {
+        return onClickReadMore;
+    }
+
+    public void setOnClickReadMore(ReadMoreTextView.onClickReadMore onClickReadMore) {
+        this.onClickReadMore = onClickReadMore;
+    }
+
+    public interface onClickReadMore {
+        void onClick(View view);
+    }
 
     public ReadMoreTextView(Context context) {
         this(context, null);
@@ -180,9 +195,12 @@ public class ReadMoreTextView extends TextView {
 
     private class ReadMoreClickableSpan extends ClickableSpan {
         @Override
-        public void onClick(View widget) {
+        public void onClick(@NonNull View view) {
             readMore = !readMore;
             setText();
+            if (onClickReadMore!=null){
+                onClickReadMore.onClick(view);
+            }
         }
 
         @Override

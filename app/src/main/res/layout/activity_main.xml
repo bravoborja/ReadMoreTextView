@@ -12,8 +12,7 @@
     <com.borjabravo.readmoretextview.ReadMoreTextView
         android:id="@+id/text1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:trimCollapsedText="@string/show_all_content"/>
+        android:layout_height="wrap_content"/>
 
     <com.borjabravo.readmoretextview.ReadMoreTextView
         android:id="@+id/text2"
