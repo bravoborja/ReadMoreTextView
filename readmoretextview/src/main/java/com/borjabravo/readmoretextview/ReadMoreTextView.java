@@ -42,7 +42,7 @@ public class ReadMoreTextView extends TextView {
 
     private CharSequence text;
     private BufferType bufferType;
-    private boolean readMore = true;
+    public boolean readMore = true;
     private int trimLength;
     private CharSequence trimCollapsedText;
     private CharSequence trimExpandedText;
