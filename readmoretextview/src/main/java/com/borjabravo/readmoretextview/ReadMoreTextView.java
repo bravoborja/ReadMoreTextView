@@ -50,6 +50,7 @@ public class ReadMoreTextView extends TextView {
     private ReadMoreClickableSpan viewMoreSpan;
     private int colorClickableText;
     private boolean showTrimExpandedText;
+    private ReadMoreListener readMoreListener;
 
     private int trimMode;
     private int lineEndIndex;
@@ -184,11 +185,19 @@ public class ReadMoreTextView extends TextView {
         this.readMore = readMore;
     }
 
+    public void setReadMoreListener(ReadMoreListener readMoreListener) {
+        this.readMoreListener = readMoreListener;
+    }
+
     private class ReadMoreClickableSpan extends ClickableSpan {
         @Override
         public void onClick(View widget) {
             readMore = !readMore;
             setText();
+
+            if(readMoreListener != null){
+                readMoreListener.onReadMoreClick(readMore);
+            }
         }
 
         @Override
