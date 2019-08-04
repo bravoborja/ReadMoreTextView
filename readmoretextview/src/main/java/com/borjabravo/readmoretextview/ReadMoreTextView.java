@@ -15,11 +15,11 @@
  */
 package com.borjabravo.readmoretextview;
 
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -30,6 +30,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 public class ReadMoreTextView extends TextView {
 
     private static final int TRIM_MODE_LINES = 0;
@@ -38,17 +40,19 @@ public class ReadMoreTextView extends TextView {
     private static final int DEFAULT_TRIM_LINES = 2;
     private static final int INVALID_END_INDEX = -1;
     private static final boolean DEFAULT_SHOW_TRIM_EXPANDED_TEXT = true;
+    private static final boolean DEFAULT_READ_MORE = true;
     private static final String ELLIPSIZE = "... ";
 
     private CharSequence text;
     private BufferType bufferType;
-    private boolean readMore = true;
+    private boolean readMore;
     private int trimLength;
     private CharSequence trimCollapsedText;
     private CharSequence trimExpandedText;
     private ReadMoreClickableSpan viewMoreSpan;
     private int colorClickableText;
     private boolean showTrimExpandedText;
+    private ReadMoreListener readMoreListener;
 
     private int trimMode;
     private int lineEndIndex;
@@ -73,6 +77,7 @@ public class ReadMoreTextView extends TextView {
                 ContextCompat.getColor(context, R.color.accent));
         this.showTrimExpandedText =
                 typedArray.getBoolean(R.styleable.ReadMoreTextView_showTrimExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
+        this.readMore = typedArray.getBoolean(R.styleable.ReadMoreTextView_readMore, DEFAULT_READ_MORE);
         this.trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_trimMode, TRIM_MODE_LINES);
         typedArray.recycle();
         viewMoreSpan = new ReadMoreClickableSpan();
@@ -178,11 +183,23 @@ public class ReadMoreTextView extends TextView {
         this.trimLines = trimLines;
     }
 
+    public void setReadMore(boolean readMore) {
+        this.readMore = readMore;
+    }
+
+    public void setReadMoreListener(ReadMoreListener readMoreListener) {
+        this.readMoreListener = readMoreListener;
+    }
+
     private class ReadMoreClickableSpan extends ClickableSpan {
         @Override
         public void onClick(View widget) {
             readMore = !readMore;
             setText();
+
+            if(readMoreListener != null){
+                readMoreListener.onReadMoreClick(readMore);
+            }
         }
 
         @Override
