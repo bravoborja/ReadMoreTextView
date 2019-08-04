@@ -38,11 +38,12 @@ public class ReadMoreTextView extends TextView {
     private static final int DEFAULT_TRIM_LINES = 2;
     private static final int INVALID_END_INDEX = -1;
     private static final boolean DEFAULT_SHOW_TRIM_EXPANDED_TEXT = true;
+    private static final boolean DEFAULT_READ_MORE = true;
     private static final String ELLIPSIZE = "... ";
 
     private CharSequence text;
     private BufferType bufferType;
-    public boolean readMore = true;
+    private boolean readMore;
     private int trimLength;
     private CharSequence trimCollapsedText;
     private CharSequence trimExpandedText;
@@ -73,6 +74,7 @@ public class ReadMoreTextView extends TextView {
                 ContextCompat.getColor(context, R.color.accent));
         this.showTrimExpandedText =
                 typedArray.getBoolean(R.styleable.ReadMoreTextView_showTrimExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT);
+        this.readMore = typedArray.getBoolean(R.styleable.ReadMoreTextView_readMore, DEFAULT_READ_MORE);
         this.trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_trimMode, TRIM_MODE_LINES);
         typedArray.recycle();
         viewMoreSpan = new ReadMoreClickableSpan();
@@ -176,6 +178,10 @@ public class ReadMoreTextView extends TextView {
 
     public void setTrimLines(int trimLines) {
         this.trimLines = trimLines;
+    }
+
+    public void setReadMore(boolean readMore) {
+        this.readMore = readMore;
     }
 
     private class ReadMoreClickableSpan extends ClickableSpan {

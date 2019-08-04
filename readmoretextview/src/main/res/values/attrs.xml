@@ -5,6 +5,7 @@
         <attr name="trimCollapsedText" format="string" />
         <attr name="trimLength" format="integer" />
         <attr name="showTrimExpandedText" format="boolean" />
+        <attr name="readMore" format="boolean" />
         <attr name="colorClickableText" format="color" />
         <attr name="trimLines" format="integer" />
         <attr name="trimMode">
